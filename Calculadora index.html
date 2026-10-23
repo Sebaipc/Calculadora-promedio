@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Universitaria Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,0.3) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,0.3) 0, transparent 50%);
+            background-attachment: fixed;
+            color: #e2e8f0;
+        }
+        
+        /* Glassmorphism utilities */
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-input {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .glass-input:focus {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: #3b82f6;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Ocultar flechas en inputs numéricos */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none; margin: 0;
+        }
+        input[type="number"] { -moz-appearance: textfield; }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- PANTALLA PRINCIPAL (Calculadora) -->
+    <div id="appScreen" class="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full fade-in">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8 glass px-6 py-4 rounded-2xl">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center border border-blue-500/30">
+                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5zm0 0v7"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-white leading-tight">Calculadora Universitaria Pro</h1>
+                    <p class="text-xs text-slate-400">Sin conexión • Tus datos se mantienen en esta pestaña</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- COLUMNA IZQUIERDA: Configuración y Grupos -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- Configuración de Metas -->
+                <div class="glass rounded-2xl p-6">
+                    <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        Metas del Ramo
+                    </h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Nota para Aprobar</label>
+                            <input type="number" id="notaAprobar" value="4.0" step="0.1" min="1.0" max="7.0" class="glass-input w-full px-4 py-3 rounded-xl text-lg font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Nota para Eximirse</label>
+                            <input type="number" id="notaEximirse" value="5.5" step="0.1" min="1.0" max="7.0" class="glass-input w-full px-4 py-3 rounded-xl text-lg font-bold">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Creador de Categorías -->
+                <div class="glass rounded-2xl p-6 border-l-4 border-l-blue-500">
+                    <h3 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-4">Añadir Grupo de Evaluaciones</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                        <div class="md:col-span-5">
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Nombre (Ej: Certámenes)</label>
+                            <input type="text" id="nuevoCatNombre" placeholder="Nombre..." class="glass-input w-full px-4 py-2.5 rounded-lg text-sm">
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Valor Total (%)</label>
+                            <div class="relative">
+                                <input type="number" id="nuevoCatPorcentaje" placeholder="Ej: 70" min="1" max="100" class="glass-input w-full px-4 py-2.5 rounded-lg text-sm pr-8">
+                                <span class="absolute right-3 top-2.5 text-slate-500">%</span>
+                            </div>
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Cantidad de Notas</label>
+                            <input type="number" id="nuevoCatCantidad" placeholder="Ej: 3" min="1" step="1" class="glass-input w-full px-4 py-2.5 rounded-lg text-sm">
+                        </div>
+                        <div class="md:col-span-1">
+                            <button onclick="agregarCategoria()" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-2.5 rounded-lg transition shadow-lg shadow-blue-500/30 flex justify-center items-center h-[42px]" title="Añadir">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Evaluaciones -->
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-sm font-semibold text-slate-300 uppercase tracking-wider">Tus Evaluaciones</h3>
+                        <div id="errorPeso" class="hidden bg-red-900/50 text-red-300 px-3 py-1 rounded-md text-xs font-semibold border border-red-500/50">
+                            ¡El total supera el 100%!
+                        </div>
+                    </div>
+                    <div id="categoriasContainer" class="space-y-4">
+                        <!-- Generado por JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: Resultados Dashboard -->
+            <div class="lg:col-span-1">
+                <div class="glass rounded-3xl p-6 sticky top-6 shadow-2xl border border-white/10">
+                    <h3 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-6 text-center">Resumen de Rendimiento</h3>
+                    
+                    <!-- Promedio Circular -->
+                    <div class="relative w-40 h-40 mx-auto mb-8 flex items-center justify-center">
+                        <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="6" />
+                            <circle id="progressCircle" cx="50" cy="50" r="45" fill="none" stroke="#3b82f6" stroke-width="6" stroke-dasharray="283" stroke-dashoffset="283" class="transition-all duration-1000 ease-out" stroke-linecap="round"/>
+                        </svg>
+                        <div class="text-center">
+                            <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Promedio</p>
+                            <p class="text-5xl font-black text-white tracking-tighter" id="resPromedioActual">--</p>
+                        </div>
+                    </div>
+
+                    <!-- Progreso Evaluado -->
+                    <div class="mb-8">
+                        <div class="flex justify-between text-xs font-medium mb-2">
+                            <span class="text-slate-400">Progreso Semestre</span>
+                            <span class="text-blue-400" id="resTotalPeso">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-800/80 rounded-full h-1.5 border border-slate-700">
+                            <div class="bg-blue-500 h-1.5 rounded-full transition-all duration-700 shadow-[0_0_10px_rgba(59,130,246,0.6)]" id="barraPeso" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Necesitas -->
+                    <div class="space-y-3">
+                        <div class="bg-slate-800/40 rounded-xl p-4 border border-white/5 flex justify-between items-center">
+                            <div>
+                                <p class="text-xs text-slate-400">Para Aprobar</p>
+                                <p class="text-[10px] text-slate-500">en el <span id="resFaltaAprobar">0</span>% restante</p>
+                            </div>
+                            <div class="text-2xl font-bold text-blue-300" id="resNotaAprobar">--</div>
+                        </div>
+                        <div class="bg-slate-800/40 rounded-xl p-4 border border-white/5 flex justify-between items-center">
+                            <div>
+                                <p class="text-xs text-slate-400">Para Eximirte</p>
+                                <p class="text-[10px] text-slate-500">en el <span id="resFaltaEximir">0</span>% restante</p>
+                            </div>
+                            <div class="text-2xl font-bold text-emerald-400" id="resNotaEximir">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- LÓGICA DE LA CALCULADORA -->
+    <script>
+        // Estado global de la aplicación
+        window.state = {
+            categorias: [
+                { 
+                    id: Math.random().toString(36).substring(2, 9), 
+                    nombre: 'Pruebas Solemnes', 
+                    porcentajeTotal: 70, 
+                    cantidad: 3, 
+                    notas: ['', '', ''] 
+                }
+            ]
+        };
+
+        const container = document.getElementById('categoriasContainer');
+        const inputNotaAprobar = document.getElementById('notaAprobar');
+        const inputNotaEximirse = document.getElementById('notaEximirse');
+
+        inputNotaAprobar.addEventListener('input', calcularResultados);
+        inputNotaEximirse.addEventListener('input', calcularResultados);
+
+        window.agregarCategoria = function() {
+            const nombre = document.getElementById('nuevoCatNombre').value.trim();
+            const porcentaje = parseFloat(document.getElementById('nuevoCatPorcentaje').value);
+            const cantidad = parseInt(document.getElementById('nuevoCatCantidad').value);
+
+            if (!nombre || isNaN(porcentaje) || isNaN(cantidad) || porcentaje <= 0 || cantidad <= 0) {
+                alert("Por favor, completa los datos del grupo correctamente (Nombre, Porcentaje y Cantidad).");
+                return;
+            }
+
+            state.categorias.push({
+                id: Math.random().toString(36).substring(2, 9),
+                nombre: nombre,
+                porcentajeTotal: porcentaje,
+                cantidad: cantidad,
+                notas: new Array(cantidad).fill('')
+            });
+
+            // Limpiar inputs
+            document.getElementById('nuevoCatNombre').value = '';
+            document.getElementById('nuevoCatPorcentaje').value = '';
+            document.getElementById('nuevoCatCantidad').value = '';
+
+            render();
+        };
+
+        window.eliminarCategoria = function(id) {
+            state.categorias = state.categorias.filter(c => c.id !== id);
+            render();
+        };
+
+        window.actualizarNota = function(catId, indexNota, valor) {
+            const cat = state.categorias.find(c => c.id === catId);
+            if (cat) {
+                // Reemplazar coma por punto para evitar errores si el usuario usa coma decimal
+                cat.notas[indexNota] = valor.replace(',', '.');
+                calcularResultados();
+            }
+        };
+
+        function render() {
+            container.innerHTML = '';
+            
+            if (state.categorias.length === 0) {
+                container.innerHTML = '<div class="text-center p-8 glass rounded-2xl border-dashed border-slate-700 border-2"><p class="text-slate-500 font-medium text-sm">No hay evaluaciones creadas. Añade un grupo arriba.</p></div>';
+            }
+
+            state.categorias.forEach(cat => {
+                const card = document.createElement('div');
+                card.className = 'glass rounded-xl overflow-hidden fade-in';
+                
+                const pesoIndividual = (cat.porcentajeTotal / cat.cantidad).toFixed(1);
+
+                let html = `
+                    <div class="bg-slate-800/50 px-5 py-3 border-b border-white/5 flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-white text-sm">${cat.nombre}</h4>
+                            <p class="text-[10px] text-slate-400 font-medium tracking-wide mt-0.5">${cat.porcentajeTotal}% TOTAL &bull; ${cat.cantidad} NOTAS &bull; ~${pesoIndividual}% C/U</p>
+                        </div>
+                        <button onclick="eliminarCategoria('${cat.id}')" class="text-slate-500 hover:text-red-400 p-1.5 rounded-lg hover:bg-red-400/10 transition" title="Eliminar Grupo">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
+                    <div class="p-5">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                `;
+
+                cat.notas.forEach((nota, index) => {
+                    html += `
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider">Nota ${index + 1}</label>
+                            <input type="number" min="1.0" max="7.0" step="0.1" placeholder="-" 
+                                class="w-full px-3 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition text-center font-bold text-sm ${nota !== '' ? 'text-white' : 'text-slate-600'}"
+                                value="${nota}"
+                                oninput="actualizarNota('${cat.id}', ${index}, this.value)">
+                        </div>
+                    `;
+                });
+
+                html += `</div></div>`;
+                card.innerHTML = html;
+                container.appendChild(card);
+            });
+
+            calcularResultados();
+        }
+
+        function formatoNota(nota) {
+            if (isNaN(nota) || !isFinite(nota)) return '--';
+            // Redondear a un decimal por defecto en Chile
+            return (Math.round(nota * 10) / 10).toFixed(1);
+        }
+
+        function mostrarRequisito(notaRequerida) {
+            if (notaRequerida <= 1.0) return '<span class="text-sm font-bold text-emerald-400">¡Logrado!</span>';
+            if (notaRequerida > 7.0) return '<span class="text-sm font-bold text-red-400">Imposible (>7.0)</span>';
+            return formatoNota(notaRequerida);
+        }
+
+        function calcularResultados() {
+            let metaAprobar = parseFloat(inputNotaAprobar.value) || 4.0;
+            let metaEximir = parseFloat(inputNotaEximirse.value) || 5.5;
+
+            let pesoTotalDeclarado = 0;
+            let pesoEvaluado = 0;
+            let notaAcumulada = 0;
+
+            state.categorias.forEach(cat => {
+                pesoTotalDeclarado += cat.porcentajeTotal;
+                let pesoIndividualDecimal = (cat.porcentajeTotal / cat.cantidad) / 100;
+
+                cat.notas.forEach(notaValor => {
+                    let n = parseFloat(notaValor);
+                    if (!isNaN(n) && notaValor !== '') {
+                        pesoEvaluado += (pesoIndividualDecimal * 100);
+                        notaAcumulada += (n * pesoIndividualDecimal);
+                    }
+                });
+            });
+
+            const errorPeso = document.getElementById('errorPeso');
+            const barraPeso = document.getElementById('barraPeso');
+
+            if (pesoTotalDeclarado > 100.1) {
+                errorPeso.classList.remove('hidden');
+                barraPeso.classList.replace('bg-blue-500', 'bg-red-500');
+            } else {
+                errorPeso.classList.add('hidden');
+                barraPeso.classList.replace('bg-red-500', 'bg-blue-500');
+            }
+
+            pesoEvaluado = Math.min(Math.round(pesoEvaluado * 100) / 100, 100);
+
+            // Actualizar UI
+            document.getElementById('resTotalPeso').innerText = `${pesoEvaluado}%`;
+            barraPeso.style.width = `${pesoEvaluado}%`;
+
+            // SVG Círculo animado
+            const circle = document.getElementById('progressCircle');
+            const radius = circle.r.baseVal.value;
+            const circumference = radius * 2 * Math.PI;
+            
+            let promedioActual = 0;
+            const resPromedioActual = document.getElementById('resPromedioActual');
+
+            if (pesoEvaluado > 0) {
+                promedioActual = notaAcumulada / (pesoEvaluado / 100);
+                resPromedioActual.innerText = formatoNota(promedioActual);
+                
+                if (promedioActual >= metaEximir) {
+                    resPromedioActual.className = "text-5xl font-black tracking-tighter text-emerald-400";
+                    circle.style.stroke = "#34d399"; 
+                } else if (promedioActual >= metaAprobar) {
+                    resPromedioActual.className = "text-5xl font-black tracking-tighter text-blue-400";
+                    circle.style.stroke = "#60a5fa"; 
+                } else {
+                    resPromedioActual.className = "text-5xl font-black tracking-tighter text-red-400";
+                    circle.style.stroke = "#f87171"; 
+                }
+
+                // Animar el círculo (mapeo de escala 1-7 a porcentaje)
+                const percent = Math.max(0, (promedioActual - 1) / 6);
+                const offset = circumference - (percent * circumference);
+                circle.style.strokeDashoffset = offset;
+            } else {
+                resPromedioActual.innerText = '--';
+                resPromedioActual.className = "text-5xl font-black tracking-tighter text-white";
+                circle.style.strokeDashoffset = circumference;
+                circle.style.stroke = "rgba(255,255,255,0.1)";
+            }
+
+            // Calcular Restantes
+            let pesoRestante = 100 - pesoEvaluado;
+            pesoRestante = Math.max(0, Math.round(pesoRestante * 100) / 100);
+
+            document.getElementById('resFaltaAprobar').innerText = pesoRestante;
+            document.getElementById('resFaltaEximir').innerText = pesoRestante;
+
+            const resNotaAprobar = document.getElementById('resNotaAprobar');
+            const resNotaEximir = document.getElementById('resNotaEximir');
+
+            if (pesoRestante <= 0.01) {
+                resNotaAprobar.innerHTML = (promedioActual >= metaAprobar) ? '<span class="text-sm text-emerald-400">Aprobado</span>' : '<span class="text-sm text-red-400">Reprobado</span>';
+                resNotaEximir.innerHTML = (promedioActual >= metaEximir) ? '<span class="text-sm text-emerald-400">Eximido</span>' : '<span class="text-sm text-red-400">No Eximido</span>';
+            } else {
+                let reqAprobar = (metaAprobar - notaAcumulada) / (pesoRestante / 100);
+                let reqEximir = (metaEximir - notaAcumulada) / (pesoRestante / 100);
+
+                resNotaAprobar.innerHTML = mostrarRequisito(reqAprobar);
+                resNotaEximir.innerHTML = mostrarRequisito(reqEximir);
+            }
+        }
+
+        // Inicializar renderizado al cargar la página
+        document.addEventListener('DOMContentLoaded', render);
+    </script>
+</body>
+</html>
